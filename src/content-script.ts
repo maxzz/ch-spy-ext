@@ -15,30 +15,30 @@ function init() {
                 font-family: sans-serif;
             }
             #tm-info {
-            }
-            .failed {
-                background-color: red;
-            }
-            .copied {
+                position: absolute;
+                top: 0;
+                left: 2rem;
+                font-size: .7rem;
                 padding: .2rem .4rem;
-                font-size: .8rem;
+                display: none;
+                border-radius: 3px;
+            }
+            #tm-info.copied {
                 background-color: green;
                 color: white;
+                display: block;
             }
         </style>
 
         <div id="tm-root">
             <div>
                 <button>O</button>
+                <input id="tm-code" style="max-width: 1px; opacity: 0" spellcheck="false" value="some code">
             </div>
 
-            <div id="tm-info" class="copied2">
-                info
+            <div id="tm-info">
+                copied
             </div>
-
-            <!-- <div id="tm-code" style="display: none"> -->
-            <input id="tm-code" style="display: none" value="copied">
-
         </div>
     `;
     let btn = container.querySelector('button');
@@ -49,16 +49,16 @@ function init() {
         const el = code;
         el.select();
         el.setSelectionRange(0, 9999999);
-        if (document.execCommand('copy')) {
-            info.classList.add('copied');
-        } else {
-            info.classList.add('failed');
-        }
+        document.execCommand('copy');
+        info.classList.add('copied');
     
         setTimeout(() => {
             info.classList.remove('copied');
-            info.classList.remove('failed');
-        }, 1000);
+        }, 500);
+    }
+
+    function collectData() {
+        //let
     }
     
     btn?.addEventListener('click', (e) => {
