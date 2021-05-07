@@ -1,18 +1,3 @@
-let codeContainer: HTMLInputElement;
-let codeContainerParent: HTMLElement;
-
-const copyToClipboard = (e: MouseEvent) => {
-    const el = codeContainer;
-    el.select();
-    el.setSelectionRange(0, 99999);
-    document.execCommand('copy');
-    codeContainerParent.classList.add('copied');
-
-    setTimeout(() => {
-        codeContainerParent.classList.remove('copied');
-    }, 1000);
-};
-
 function init() {
     let container = document.createElement('div');
     container.style.position = 'absolute';
@@ -24,30 +9,61 @@ function init() {
     // container.style.backgroundColor = 'red';
 
     container.innerHTML = `
-        <div style="display: flex">
-            <style>
-                #tm-info1 {
-                    background-color: red;
-                }
-                .copied {
-                    padding: .2rem .4rem;
-                    font-size: .8rem;
-                    background-color: green;
-                    color: white;
-                }
-            </style>
-            <button>O</button>
-            <div id="tm-info" style="margin-left: .4rem" class="copied">
+        <style>
+            #tm-root > * {
+                margin: 0;
+                font-family: sans-serif;
+            }
+            #tm-info {
+            }
+            .failed {
+                background-color: red;
+            }
+            .copied {
+                padding: .2rem .4rem;
+                font-size: .8rem;
+                background-color: green;
+                color: white;
+            }
+        </style>
+
+        <div id="tm-root">
+            <div>
+                <button>O</button>
+            </div>
+
+            <div id="tm-info" class="copied2">
                 info
             </div>
-            <div id="tm-code" style="display: none">
-                copied
-            </div>
+
+            <!-- <div id="tm-code" style="display: none"> -->
+            <input id="tm-code" style="display: none" value="copied">
+
         </div>
     `;
     let btn = container.querySelector('button');
-    let code = container.querySelector('#tm-code');
-    let info = container.querySelector('#tm-info');
+    let code = container.querySelector('#tm-code') as HTMLInputElement;
+    let info = container.querySelector('#tm-info') as HTMLElement;
+
+    function copyToClipboard(e: MouseEvent) {
+        const el = code;
+        el.select();
+        el.setSelectionRange(0, 9999999);
+        if (document.execCommand('copy')) {
+            info.classList.add('copied');
+        } else {
+            info.classList.add('failed');
+        }
+    
+        setTimeout(() => {
+            info.classList.remove('copied');
+            info.classList.remove('failed');
+        }, 1000);
+    }
+    
+    btn?.addEventListener('click', (e) => {
+        copyToClipboard(e);
+    }, false);
 
     console.log(btn, code, info);
 
