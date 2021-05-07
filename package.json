@@ -4,7 +4,8 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "serve": "vite preview"
+    "serve": "vite preview",
+    "build-script": "tsc src/content-script.ts --outFile dist/deploy.js"
   },
   "devDependencies": {
     "autoprefixer": "^10.2.5",

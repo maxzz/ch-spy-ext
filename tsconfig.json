@@ -10,9 +10,9 @@
     "esModuleInterop": true,
     "types": ["vite/client"],
     "noEmit": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "noImplicitReturns": true
+    //"noUnusedLocals": true,
+    //"noUnusedParameters": true,
+    //"noImplicitReturns": true
   },
   "include": ["./src"]
 }

@@ -18,9 +18,22 @@ function init() {
     container.style.position = 'absolute';
     container.style.left = '0';
     container.style.top = '0';
-    container.style.width = '100px';
-    container.style.height = '50px';
-    container.style.backgroundColor = 'red';
+    // container.style.width = '100px';
+    // container.style.height = '50px';
+    container.style.zIndex = '1000';
+    // container.style.backgroundColor = 'red';
+
+    container.innerHTML = `
+        <div style="display: flex">
+            <button>O</button>
+            <div>
+                <button>copy</button>
+            </div>
+        </div>
+    `;
+    let btns = container.querySelectorAll('button');
+
+    console.log(btns);
 
     document.body.insertBefore(container, document.body.firstElementChild);
 }
