@@ -25,15 +25,31 @@ function init() {
 
     container.innerHTML = `
         <div style="display: flex">
+            <style>
+                #tm-info1 {
+                    background-color: red;
+                }
+                .copied {
+                    padding: .2rem .4rem;
+                    font-size: .8rem;
+                    background-color: green;
+                    color: white;
+                }
+            </style>
             <button>O</button>
-            <div>
-                <button>copy</button>
+            <div id="tm-info" style="margin-left: .4rem" class="copied">
+                info
+            </div>
+            <div id="tm-code" style="display: none">
+                copied
             </div>
         </div>
     `;
-    let btns = container.querySelectorAll('button');
+    let btn = container.querySelector('button');
+    let code = container.querySelector('#tm-code');
+    let info = container.querySelector('#tm-info');
 
-    console.log(btns);
+    console.log(btn, code, info);
 
     document.body.insertBefore(container, document.body.firstElementChild);
 }
