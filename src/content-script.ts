@@ -61,7 +61,7 @@ function init() {
         setTimeout(() => info.classList.remove(className), delay);
     }
 
-    function copyToClipboard(e: MouseEvent) {
+    function copyToClipboard() {
         const el = code;
         el.select();
         el.setSelectionRange(0, 9999999);
@@ -95,21 +95,22 @@ function init() {
             items: items,
         }
 
-        code.value = JSON.stringify(source);
+        code.value = JSON.stringify('source');
+
         console.log('tm result:', code.value);
     }
 
     btn?.addEventListener('click', async (e) => {
         try {
             await collectData();
-            copyToClipboard(e);
+            copyToClipboard();
         } catch (error) {
             showResult(false);
             console.log('tm error', error);
         }
     }, false);
 
-    console.log(btn, code, info);
+    //console.log(btn, code, info);
 
     document.body.insertBefore(container, document.body.firstElementChild);
 }
