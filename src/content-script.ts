@@ -3,17 +3,17 @@ function main() {
     container.style.position = 'absolute';
     container.style.left = '0';
     container.style.top = '0';
-    // container.style.width = '100px';
-    // container.style.height = '50px';
     container.style.zIndex = '1000';
-    // container.style.backgroundColor = 'red';
 
     container.innerHTML = `
         <style>
             #tm-root > * {
                 margin: 0;
-                font-family: sans-serif;
+                font-family: Avenir, Helvetica, Arial, sans-serif;
                 font-size: .6rem;
+            }
+            #tm-root button {
+                border: 1px solid #272727;
             }
             #tm-btns {
                 display: none;
@@ -23,6 +23,7 @@ function main() {
                 /*max-width: 1px; opacity: 0;*/
                 display: none;
                 font-size: .5rem;
+                margin-left: .2rem;
             }
             #tm-info {
                 position: absolute;
