@@ -96,6 +96,7 @@ function init() {
         }
 
         code.value = JSON.stringify(source);
+        console.log('tm result:', code.value);
     }
 
     btn?.addEventListener('click', async (e) => {

@@ -5,7 +5,7 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "serve": "vite preview",
-    "build-script": "tsc src/content-script.ts --outFile dist/deploy.js"
+    "get": "tsc src/content-script.ts --outFile dist/deploy.js --removeComments --target esnext"
   },
   "devDependencies": {
     "autoprefixer": "^10.2.5",
