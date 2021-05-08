@@ -1,4 +1,4 @@
-function init() {
+function main() {
     let container = document.createElement('div');
     container.style.position = 'absolute';
     container.style.left = '0';
@@ -14,18 +14,22 @@ function init() {
                 margin: 0;
                 font-family: sans-serif;
             }
-            #tm-info {
-                position: absolute;
-                top: 0;
-                left: 2rem;
-                font-size: .7rem;
-                padding: .2rem .4rem;
+            #tm-btns {
                 display: none;
-                border-radius: 3px;
+                margin-left: .2rem;
             }
             #tm-code {
                 max-width: 1px;
                 opacity: 0;
+            }
+            #tm-info {
+                position: absolute;
+                top: 0;
+                left: 6rem;
+                font-size: .7rem;
+                padding: .2rem .4rem;
+                display: none;
+                border-radius: 3px;
             }
             #tm-info.copied {
                 background-color: green;
@@ -41,17 +45,26 @@ function init() {
         </style>
 
         <div id="tm-root">
-            <div>
-                <button>O</button>
+            <div style="display: flex">
+                <button id="tm-run">o</button>
+                <div id="tm-btns">
+                    <button>copy</button>
+                    <button style="margin-left: -1px">x</button>
+                </div>
                 <input id="tm-code" spellcheck="false">
             </div>
             <div id="tm-info"></div>
         </div>
     `;
 
-    let btn = container.querySelector('button');
+    let btn = container.querySelector('#tm-run');
+    let btns = container.querySelector('#tm-btns') as HTMLElement;
+    let allbtns = btns?.querySelectorAll('button');
+    let btncopy = allbtns?.[0];
+    let btnclose = allbtns?.[1];
     let code = container.querySelector('#tm-code') as HTMLInputElement;
     let info = container.querySelector('#tm-info') as HTMLElement;
+
 
     function showResult(ok: boolean) {
         let className = ok ? 'copied' : 'failed';
@@ -83,36 +96,42 @@ function init() {
             throw new Error("Cannot find play items link");
         }
         
-        //itemsUrl='';
         let res = await fetch(itemsUrl);
         let items = res.ok && await res.json();
         if (!items) {
             throw new Error("Cannot fetch play items");
         }
 
-        let source = {
+        return JSON.stringify({
             doc: html,
             items: items,
-        }
-
-        code.value = JSON.stringify('source');
-
-        console.log('tm result:', code.value);
+        });
     }
 
     btn?.addEventListener('click', async (e) => {
         try {
-            await collectData();
-            copyToClipboard();
+            code.value = '';
+            let data = await collectData();
+            code.value = data;
+            btns.style.display = 'flex';
+            console.log('tm done'); // leave here for debugging.
         } catch (error) {
+            btns.style.display = 'none';
             showResult(false);
             console.log('tm error', error);
         }
     }, false);
 
-    //console.log(btn, code, info);
+    btncopy?.addEventListener('click', () => {
+        copyToClipboard();
+    }, false);
+
+    btnclose?.addEventListener('click', () => {
+        code.value = '';
+        btns.style.display = 'none';
+    }, false);
 
     document.body.insertBefore(container, document.body.firstElementChild);
 }
 
-init();
+main();
