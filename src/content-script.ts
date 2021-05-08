@@ -19,8 +19,8 @@ function main() {
                 margin-left: .2rem;
             }
             #tm-code {
-                max-width: 1px;
-                opacity: 0;
+                /*max-width: 1px; opacity: 0;*/
+                display: none;
             }
             #tm-info {
                 position: absolute;
@@ -64,7 +64,6 @@ function main() {
     let btnclose = allbtns?.[1];
     let code = container.querySelector('#tm-code') as HTMLInputElement;
     let info = container.querySelector('#tm-info') as HTMLElement;
-
 
     function showResult(ok: boolean) {
         let className = ok ? 'copied' : 'failed';
@@ -110,8 +109,12 @@ function main() {
 
     btn?.addEventListener('click', async (e) => {
         try {
+            btns.style.display = 'none';
+            code.style.display = 'none';
             code.value = '';
+
             let data = await collectData();
+            code.style.display = 'block';
             code.value = data;
             btns.style.display = 'flex';
             console.log('tm done'); // leave here for debugging.
@@ -127,8 +130,9 @@ function main() {
     }, false);
 
     btnclose?.addEventListener('click', () => {
-        code.value = '';
         btns.style.display = 'none';
+        code.style.display = 'none';
+        code.value = '';
     }, false);
 
     document.body.insertBefore(container, document.body.firstElementChild);
