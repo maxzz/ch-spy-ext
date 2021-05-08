@@ -99,12 +99,15 @@ function main() {
         }
         
         let res = await fetch(itemsUrl);
-        let items = res.ok && await res.json();
-        if (!items) {
+        let items = res.ok && await res.text();
+        if (!res.ok) {
             throw new Error("Cannot fetch play items");
         }
 
         return JSON.stringify({
+            a: 'tm',
+            docurl: document.location.href,
+            itemsurl: itemsUrl,
             doc: html,
             items: items,
         });
