@@ -13,6 +13,7 @@ function main() {
             #tm-root > * {
                 margin: 0;
                 font-family: sans-serif;
+                font-size: .6rem;
             }
             #tm-btns {
                 display: none;
@@ -21,12 +22,13 @@ function main() {
             #tm-code {
                 /*max-width: 1px; opacity: 0;*/
                 display: none;
+                font-size: .5rem;
             }
             #tm-info {
                 position: absolute;
-                top: 0;
-                left: 6rem;
-                font-size: .7rem;
+                top: 1.4rem;
+                left: 1.2rem;
+                font-size: .9rem;
                 padding: .2rem .4rem;
                 display: none;
                 border-radius: 3px;
