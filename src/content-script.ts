@@ -85,21 +85,43 @@ function main() {
     }
 
     async function collectData() {
-        let html = document.documentElement.outerHTML;
+        const html = document.documentElement.outerHTML;
 
-        function getPlayerItemsUrl(html: string): string {
+        function getPlayerItemsUrl_v0_0(html: string): string {
             const reAxiosItemsQuery = /\/course\/\d{3,10}?\/lessons/g;
             let m: RegExpExecArray | null = reAxiosItemsQuery.exec(html);
             return m ? `https://coursehunter.net${m[0]}` : '';
         }
 
-        let itemsUrl = getPlayerItemsUrl(html); //https://coursehunter.net/course/208/lessons"
-        if (!itemsUrl) {
-            throw new Error("Cannot find play items link");
+        function getPlayerItemsUrl_v1_0(): string {
+            function getLessonsId() {
+                /*
+                    [...$$('head > script')].forEach((item) => {
+                        const text = item.innerText;
+                        const m = (text || '').match(/"mpn": "(\d{3,8})"/);
+                        text && console.log(text, m);
+                    })            
+                */
+                const id = [...document.querySelectorAll<HTMLElement>('head > script')].map((script) => {
+                    const m = (script.innerText || '').match(/"mpn": "(\d{3,8})"/);
+                    return m?.[1];
+                }).filter(Boolean)[0];
+                return id;
+            }
+            const id = getLessonsId();
+            return id ? `https://coursehunter.net/api/v1/course/${id}/lessons` : '';
         }
-        
-        let res = await fetch(itemsUrl);
-        let items = res.ok && await res.text();
+
+        let itemsUrl = getPlayerItemsUrl_v1_0();
+        if (!itemsUrl) {
+            itemsUrl = getPlayerItemsUrl_v0_0(html); //https://coursehunter.net/course/208/lessons"
+            if (!itemsUrl) {
+                throw new Error("Cannot find play items link");
+            }
+        }
+
+        const res = await fetch(itemsUrl);
+        const items = res.ok && await res.text();
         if (!res.ok) {
             throw new Error("Cannot fetch play items");
         }
@@ -111,7 +133,8 @@ function main() {
             doc: html,
             items: items,
         });
-    }
+
+    } //collectData()
 
     btn?.addEventListener('click', async (e) => {
         try {

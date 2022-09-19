@@ -7,4 +7,7 @@ The script can be embedded in the content of the page with the [AddJS](https://c
 * Run ```yarn dev``` to develop.
 * Run ```yarn get``` to build javascript file that you can embed. The generated deploy.js script is located in the dist folder.
 
+#### History
+    09.18.22 updated queries to the new API version: https://coursehunter.net/api/v1/course/{dddd}/lessons
+
 ![](src/assets/previews/2021-05-07_19-17-13.png)
