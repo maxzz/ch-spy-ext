@@ -50,42 +50,57 @@ function main() {
         <div id="tm-root">
             <div style="display: flex">
                 <button id="tm-run">o</button>
+
                 <div id="tm-btns">
                     <button>copy</button>
                     <button style="margin-left: -1px">x</button>
                 </div>
+
                 <input id="tm-code" spellcheck="false">
             </div>
             <div id="tm-info"></div>
         </div>
     `;
 
-    let btn = container.querySelector('#tm-run');
-    let btns = container.querySelector('#tm-btns') as HTMLElement;
-    let allbtns = btns?.querySelectorAll('button');
-    let btncopy = allbtns?.[0];
-    let btnclose = allbtns?.[1];
-    let code = container.querySelector('#tm-code') as HTMLInputElement;
-    let info = container.querySelector('#tm-info') as HTMLElement;
+    let _btn = container.querySelector<HTMLButtonElement>('#tm-run')!;
+    let _btns = container.querySelector<HTMLElement>('#tm-btns')!;
+    let [_btncopy, _btnclose] = _btns?.querySelectorAll('button');
+    let _code = container.querySelector<HTMLInputElement>('#tm-code')!;
+    let _info = container.querySelector<HTMLElement>('#tm-info')!;
 
-    function showResult(ok: boolean) {
-        let className = ok ? 'copied' : 'failed';
-        let delay = ok ? 500 : 1500;
-        info.innerText = ok ? 'copied' : 'failed. check console.';
-        info.classList.add(className);
-        setTimeout(() => info.classList.remove(className), delay);
-    }
-
-    function copyToClipboard() {
-        const el = code;
-        el.select();
-        el.setSelectionRange(0, 9999999);
-        document.execCommand('copy');
-        showResult(true);
-    }
+    let ui = {
+        btn: _btn,
+        btns: _btns,
+        btncopy: _btncopy,
+        btnclose: _btnclose,
+        code: _code,
+        info: _info,
+    };
 
     async function collectData() {
         const html = document.documentElement.outerHTML;
+
+        let itemsUrl = getPlayerItemsUrl_v1_0();
+        if (!itemsUrl) {
+            itemsUrl = getPlayerItemsUrl_v0_0(html); //https://coursehunter.net/course/208/lessons"
+            if (!itemsUrl) {
+                throw new Error("Cannot find play items link");
+            }
+        }
+
+        const res = await fetch(itemsUrl);
+        const items = res.ok && await res.text();
+        if (!res.ok) {
+            throw new Error("Cannot fetch play items");
+        }
+
+        return JSON.stringify({
+            a: 'tm',
+            docurl: document.location.href,
+            itemsurl: itemsUrl,
+            doc: html,
+            items: items,
+        });
 
         function getPlayerItemsUrl_v0_0(html: string): string {
             const reAxiosItemsQuery = /\/course\/\d{3,10}?\/lessons/g;
@@ -112,56 +127,51 @@ function main() {
             return id ? `https://coursehunter.net/api/v1/course/${id}/lessons` : '';
         }
 
-        let itemsUrl = getPlayerItemsUrl_v1_0();
-        if (!itemsUrl) {
-            itemsUrl = getPlayerItemsUrl_v0_0(html); //https://coursehunter.net/course/208/lessons"
-            if (!itemsUrl) {
-                throw new Error("Cannot find play items link");
-            }
-        }
-
-        const res = await fetch(itemsUrl);
-        const items = res.ok && await res.text();
-        if (!res.ok) {
-            throw new Error("Cannot fetch play items");
-        }
-
-        return JSON.stringify({
-            a: 'tm',
-            docurl: document.location.href,
-            itemsurl: itemsUrl,
-            doc: html,
-            items: items,
-        });
-
     } //collectData()
 
-    btn?.addEventListener('click', async (e) => {
-        try {
-            btns.style.display = 'none';
-            code.style.display = 'none';
-            code.value = '';
+    function showResult(ok: boolean) {
+        let className = ok ? 'copied' : 'failed';
+        let delay = ok ? 500 : 1500;
+        ui.info.innerText = ok ? 'copied' : 'failed. check console.';
+        ui.info.classList.add(className);
+        setTimeout(() => ui.info.classList.remove(className), delay);
+    }
 
-            let data = await collectData();
-            code.style.display = 'block';
-            code.value = data;
-            btns.style.display = 'flex';
+    function copyToClipboard() {
+        const el = ui.code;
+        el.select();
+        el.setSelectionRange(0, 9999999);
+        document.execCommand('copy');
+        showResult(true);
+    }
+
+    ui.btn?.addEventListener('click', async (e) => {
+        try {
+            ui.btns.style.display = 'none';
+            ui.code.style.display = 'none';
+
+            ui.code.value = '';
+            let collectedData = await collectData();
+            ui.code.value = collectedData;
+
+            ui.code.style.display = 'block';
+            ui.btns.style.display = 'flex';
             console.log('tm done'); // leave here for debugging.
         } catch (error) {
-            btns.style.display = 'none';
+            ui.btns.style.display = 'none';
             showResult(false);
             console.log('tm error', error);
         }
     }, false);
 
-    btncopy?.addEventListener('click', () => {
+    ui.btncopy?.addEventListener('click', () => {
         copyToClipboard();
     }, false);
 
-    btnclose?.addEventListener('click', () => {
-        btns.style.display = 'none';
-        code.style.display = 'none';
-        code.value = '';
+    ui.btnclose?.addEventListener('click', () => {
+        ui.btns.style.display = 'none';
+        ui.code.style.display = 'none';
+        ui.code.value = '';
     }, false);
 
     document.body.insertBefore(container, document.body.firstElementChild);
