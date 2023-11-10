@@ -37,22 +37,37 @@ function main() {
         }
 
         function getPlayerItemsUrl_v1_0(): string {
-            function getLessonsId() {
-                /*
-                    [...$$('head > script')].forEach((item) => {
-                        const text = item.innerText;
-                        const m = (text || '').match(/"mpn": "(\d{3,8})"/);
-                        text && console.log(text, m);
-                    })            
-                */
-                const id = [...document.querySelectorAll<HTMLElement>('head > script')].map((script) => {
-                    const m = (script.innerText || '').match(/"mpn": "(\d{3,8})"/);
-                    return m?.[1];
-                }).filter(Boolean)[0];
-                return id;
-            }
             const id = getLessonsId();
             return id ? `https://coursehunter.net/api/v1/course/${id}/lessons` : '';
+
+            function getLessonsId() {
+                /*  
+                    // devtools console version
+                    [...$$('head > script')].forEach((script) => {
+                        const text = script.innerText || '';
+                        const m = scriptText.match(/"mpn": "(\d{3,8})"/);
+                        text && console.log(script, m);
+                    })            
+                */
+                let id = [...document.querySelectorAll<HTMLElement>('head > script')]
+                    .map((script) => {
+                        const scriptText = script.innerText || '';
+                        const m = scriptText.match(/"mpn": "(\d{3,8})"/);
+                        return m?.[1];
+                    }).filter(Boolean)[0];
+
+                if (!id) {
+                    // <script>var course_id = 5734;</script>
+                    id = [...document.querySelectorAll<HTMLElement>('body > script')]
+                        .map((script) => {
+                            const scriptText = script.innerText || '';
+                            const m = scriptText.match(/course_id = (\d{3,8})/);
+                            return m?.[1];
+                        }).filter(Boolean)[0];
+                }
+
+                return id;
+            }
         }
 
     } //collectData()
@@ -79,7 +94,7 @@ function main() {
         container.style.left = '0';
         container.style.top = '0';
         container.style.zIndex = '1000';
-    
+
         container.innerHTML = `
             <style>
                 #tm-root > * {
@@ -151,7 +166,7 @@ function main() {
     function initUi(container: HTMLElement): UI {
         let _btns = container.querySelector<HTMLElement>('#tm-btns')!;
         let [_btncopy, _btnclose] = _btns?.querySelectorAll('button');
-    
+
         let ui: UI = {
             btn: container.querySelector<HTMLButtonElement>('#tm-run')!,
             btns: _btns,
@@ -168,27 +183,27 @@ function main() {
             try {
                 ui.btns.style.display = 'none';
                 ui.code.style.display = 'none';
-    
+
                 ui.code.value = '';
                 let collectedData = await collectData();
                 ui.code.value = collectedData;
-    
+
                 ui.code.style.display = 'block';
                 ui.btns.style.display = 'flex';
-    
+
                 console.log('tm done'); // leave here for debugging.
             } catch (error) {
                 ui.btns.style.display = 'none';
                 showResult(false);
-    
+
                 console.log('tm error', error);
             }
         }, false);
-    
+
         ui.btncopy?.addEventListener('click', () => {
             copyToClipboard();
         }, false);
-    
+
         ui.btnclose?.addEventListener('click', () => {
             ui.btns.style.display = 'none';
             ui.code.style.display = 'none';
