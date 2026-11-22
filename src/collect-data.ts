@@ -1,20 +1,29 @@
 //---------------------------------------------------------------------------
 
-export async function collectData(): Promise<string> {
-    const html = document.documentElement.outerHTML;
+export type CollectDataResult = {
+    docHtml: string;
+    itemsUrl: string | undefined;
+    items: string | undefined;
+};
+
+export async function collectData(): Promise<CollectDataResult> {
+    const docHtml = document.documentElement.outerHTML;
 
     // get version 1.0 of the player items url
     let itemsUrl = getPlayerItemsUrl_v1_0();
     
     if (!itemsUrl) {
-
         // get version 0.0 of the player items url
-        itemsUrl = getPlayerItemsUrl_v0_0(html); //https://coursehunter.net/course/208/lessons"
+        itemsUrl = getPlayerItemsUrl_v0_0(docHtml); //https://coursehunter.net/course/208/lessons"
     }
 
     const items = await fetchItems(itemsUrl);
 
-    return buildResult(html, itemsUrl, items);
+    return {
+        docHtml: docHtml,
+        itemsUrl: itemsUrl,
+        items: items,
+    };
 }
 
 async function fetchItems(itemsUrl: string | undefined): Promise<string | undefined> {
@@ -36,21 +45,21 @@ async function fetchItems(itemsUrl: string | undefined): Promise<string | undefi
 //---------------------------------------------------------------------------
 
 type BuildResult = {
-    a: string;
-    docurl: string;
-    itemsurl: string;
-    doc: string;
-    items: string | undefined;
+    a: string;                    // magic string to identify the result
+    docurl: string;               // document url
+    itemsurl: string | undefined; // player items url; if undefined then cannot get url from document
+    doc: string;                  // document html
+    items: string | undefined;    // player items json; if undefined then cannot fetch items from url
 };
 
-async function buildResult(html: string, itemsUrl: string, items: string | undefined): Promise<string> {
+export function buildResult(collectedData: CollectDataResult): string {
     
     const buildResult: BuildResult = {
         a: 'tm',
         docurl: document.location.href,
-        itemsurl: itemsUrl,
-        doc: html,
-        items: items,
+        itemsurl: collectedData.itemsUrl,
+        doc: collectedData.docHtml,
+        items: collectedData.items,
     };
 
     return JSON.stringify(buildResult);

@@ -1,14 +1,19 @@
-import { collectData } from './collect-data';
+import { type CollectDataResult, buildResult, collectData } from './collect-data';
 
 function main() {
+    let collectedData: CollectDataResult | undefined;
 
     let container = createContainer();
     let ui = initUi(container);
     addListeners(ui);
+
     document.body.insertBefore(container, document.body.firstElementChild);
 
     function showResult(ok: boolean) {
-        let className = ok ? 'copied' : 'failed';
+        let className =
+            ok
+                ? !collectedData?.itemsUrl || !collectedData?.items ? 'partially' : 'copied'
+                : 'failed';
         let delay = ok ? 500 : 1500;
         ui.info.innerText = ok ? 'Copied' : 'Failed: check console for details.';
         ui.info.classList.add(className);
@@ -64,6 +69,12 @@ function main() {
                     color: white;
                     display: block;
                 }
+                #tm-info.partially {
+                    background-color: oklch(0.41 0.18 263.57);
+                    color: white;
+                    display: block;
+                    min-width: 10rem;
+                }
                 #tm-info.failed {
                     background-color: red;
                     color: white;
@@ -90,12 +101,12 @@ function main() {
     }
 
     type UI = {
-        btn: HTMLButtonElement;
-        btns: HTMLElement;
-        btncopy: HTMLButtonElement;
-        btnclose: HTMLButtonElement;
-        code: HTMLInputElement;
-        info: HTMLElement;
+        btn: HTMLButtonElement;        // run button
+        btns: HTMLElement;             // copy and close buttons container
+        btncopy: HTMLButtonElement;    // copy button
+        btnclose: HTMLButtonElement;   // close button
+        code: HTMLInputElement;        // code input element
+        info: HTMLElement;             // info element
     };
 
     function initUi(container: HTMLElement): UI {
@@ -120,8 +131,8 @@ function main() {
                 ui.code.style.display = 'none';
 
                 ui.code.value = '';
-                let collectedData = await collectData();
-                ui.code.value = collectedData;
+                collectedData = await collectData();
+                ui.code.value = buildResult(collectedData);
 
                 ui.code.style.display = 'block';
                 ui.btns.style.display = 'flex';
