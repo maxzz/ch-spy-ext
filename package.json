@@ -1,19 +1,19 @@
 {
-  "name": "ch-spy-content-script",
-  "description": "Content script to be embedded for deletion on coursehunters.com",
-  "version": "0.1.1",
-  "license": "MIT",
-  "scripts": {
-    "dev": "vite",
-    "build": "tsc && vite build",
-    "serve": "vite preview",
-    "get": "vite build --config vite.content.config.mjs"
-  },
-  "devDependencies": {
-    "@types/node": "^26.6.6",
-    "autoprefixer": "^10.2.5",
-    "postcss": "^8.2.14",
-    "typescript": "^7.0.2",
-    "vite": "^8.3.8"
-  }
+    "name": "ch-spy-content-script",
+    "description": "A content script designed for injection into the coursehunters.com website.",
+    "version": "0.26.1",
+    "license": "MIT",
+    "devDependencies": {
+        "@types/node": "^26.6.6",
+        "autoprefixer": "^10.2.5",
+        "postcss": "^8.2.14",
+        "typescript": "^7.0.2",
+        "vite": "^8.3.8"
+    },
+    "scripts": {
+        "dev": "vite",
+        "build": "tsc && vite build",
+        "serve": "vite preview",
+        "get": "vite build --config vite.content.config.mjs"
+    }
 }
