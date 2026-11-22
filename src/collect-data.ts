@@ -3,6 +3,7 @@ export async function collectData(): Promise<string> {
 
     // get version 1.0 of the player items url
     let itemsUrl = getPlayerItemsUrl_v1_0();
+    
     if (!itemsUrl) {
 
         // get version 0.0 of the player items url
@@ -12,9 +13,14 @@ export async function collectData(): Promise<string> {
         }
     }
 
-    // version 1.0 of the player items url
+    return buildResult(html, itemsUrl);
+}
 
+//---------------------------------------------------------------------------
+
+async function buildResult(html: string, itemsUrl: string): Promise<string> {
     const res = await fetch(itemsUrl);
+    
     const items = res.ok && await res.text();
     if (!res.ok) {
         throw new Error("Cannot fetch play items");
