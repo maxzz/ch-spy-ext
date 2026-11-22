@@ -10,9 +10,6 @@ export async function collectData(): Promise<string> {
 
         // get version 0.0 of the player items url
         itemsUrl = getPlayerItemsUrl_v0_0(html); //https://coursehunter.net/course/208/lessons"
-        if (!itemsUrl) {
-            throw new Error("Cannot find play items link");
-        }
     }
 
     const items = await fetchItems(itemsUrl);
@@ -22,12 +19,15 @@ export async function collectData(): Promise<string> {
 
 async function fetchItems(itemsUrl: string | undefined): Promise<string | undefined> {
     if (!itemsUrl) {
+        console.error("Cannot find player items link");
         return undefined;
     }
 
     const res = await fetch(itemsUrl);
+
     if (!res.ok) {
-        throw new Error("Cannot fetch itemsUrl to get play items");
+        console.error("Cannot fetch itemsUrl to get player items");
+        return undefined;
     }
 
     return await res.text();
@@ -35,16 +35,25 @@ async function fetchItems(itemsUrl: string | undefined): Promise<string | undefi
 
 //---------------------------------------------------------------------------
 
+type BuildResult = {
+    a: string;
+    docurl: string;
+    itemsurl: string;
+    doc: string;
+    items: string | undefined;
+};
+
 async function buildResult(html: string, itemsUrl: string, items: string | undefined): Promise<string> {
     
-
-    return JSON.stringify({
+    const buildResult: BuildResult = {
         a: 'tm',
         docurl: document.location.href,
         itemsurl: itemsUrl,
         doc: html,
         items: items,
-    });
+    };
+
+    return JSON.stringify(buildResult);
 }
 
 //---------------------------------------------------------------------------

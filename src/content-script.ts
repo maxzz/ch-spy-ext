@@ -10,7 +10,7 @@ function main() {
     function showResult(ok: boolean) {
         let className = ok ? 'copied' : 'failed';
         let delay = ok ? 500 : 1500;
-        ui.info.innerText = ok ? 'copied' : 'failed. check console.';
+        ui.info.innerText = ok ? 'Copied' : 'Failed: check console for details.';
         ui.info.classList.add(className);
         setTimeout(() => ui.info.classList.remove(className), delay);
     }
