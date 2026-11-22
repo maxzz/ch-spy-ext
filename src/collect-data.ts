@@ -1,3 +1,5 @@
+//---------------------------------------------------------------------------
+
 export async function collectData(): Promise<string> {
     const html = document.documentElement.outerHTML;
 
@@ -13,18 +15,28 @@ export async function collectData(): Promise<string> {
         }
     }
 
-    return buildResult(html, itemsUrl);
+    const items = await fetchItems(itemsUrl);
+
+    return buildResult(html, itemsUrl, items);
+}
+
+async function fetchItems(itemsUrl: string | undefined): Promise<string | undefined> {
+    if (!itemsUrl) {
+        return undefined;
+    }
+
+    const res = await fetch(itemsUrl);
+    if (!res.ok) {
+        throw new Error("Cannot fetch itemsUrl to get play items");
+    }
+
+    return await res.text();
 }
 
 //---------------------------------------------------------------------------
 
-async function buildResult(html: string, itemsUrl: string): Promise<string> {
-    const res = await fetch(itemsUrl);
+async function buildResult(html: string, itemsUrl: string, items: string | undefined): Promise<string> {
     
-    const items = res.ok && await res.text();
-    if (!res.ok) {
-        throw new Error("Cannot fetch play items");
-    }
 
     return JSON.stringify({
         a: 'tm',
