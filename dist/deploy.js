@@ -3,6 +3,7 @@
 	async function collectData() {
 		const docHtml = document.documentElement.outerHTML;
 		let itemsUrl = getPlayerItemsUrl_v1_0();
+		if (!itemsUrl) itemsUrl = getPlayerItemsUrl_v2_0();
 		if (!itemsUrl) itemsUrl = getPlayerItemsUrl_v0_0(docHtml);
 		const items = await fetchItems(itemsUrl);
 		return {
@@ -35,11 +36,15 @@
 	}
 	function getPlayerItemsUrl_v0_0(html) {
 		let m = /\/course\/\d{3,10}?\/lessons/g.exec(html);
-		return m ? `https://coursehunter.net${m[0]}` : "";
+		const url = m ? `https://coursehunter.net${m[0]}` : "";
+		if (url) console.log("Player list v0 (01.19.20 17:00) \"%s\"", url);
+		return url;
 	}
 	function getPlayerItemsUrl_v1_0() {
 		const id = getLessonsId();
-		return id ? `https://coursehunter.net/api/v1/course/${id}/lessons` : "";
+		const url = id ? `https://coursehunter.net/api/v1/course/${id}/lessons` : "";
+		if (url) console.log("Player list v1 (02.19.21 18:00) \"%s\"", url);
+		return url;
 		function getLessonsId() {
 			let id = [...document.querySelectorAll("head > script")].map((script) => {
 				return (script.innerText || "").match(/"mpn": "(\d{3,8})"/)?.[1];
@@ -48,6 +53,15 @@
 				return (script.innerText || "").match(/course_id = (\d{3,8})/)?.[1];
 			}).filter(Boolean)[0];
 			return id;
+		}
+	}
+	function getPlayerItemsUrl_v2_0() {
+		const id = getLessonsId();
+		const url = id ? `https://coursehunter.net/api/v1/course/${id}/lessons` : "";
+		if (url) console.log("Player list v2 (11.23.26 19:54) \"%s\"", url);
+		return url;
+		function getLessonsId() {
+			return document.querySelector("body")?.getAttribute("data-course-id");
 		}
 	}
 	// src/content-script.ts
@@ -64,12 +78,14 @@
 			ui.info.classList.add(className);
 			setTimeout(() => ui.info.classList.remove(className), delay);
 		}
-		function copyToClipboard() {
-			const el = ui.code;
-			el.select();
-			el.setSelectionRange(0, 9999999);
-			document.execCommand("copy");
-			showResult(true);
+		async function copyToClipboard() {
+			try {
+				await navigator.clipboard.writeText(ui.code.value);
+				showResult(true);
+			} catch (error) {
+				console.log("Error copying to clipboard", error);
+				showResult(false);
+			}
 		}
 		function createContainer() {
 			let container = document.createElement("div");
