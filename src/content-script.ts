@@ -20,12 +20,18 @@ function main() {
         setTimeout(() => ui.info.classList.remove(className), delay);
     }
 
-    function copyToClipboard() {
-        const el = ui.code;
-        el.select();
-        el.setSelectionRange(0, 9999999);
-        document.execCommand('copy');
-        showResult(true);
+    async function copyToClipboard() {
+        // const el = ui.code;
+        // el.select();
+        // el.setSelectionRange(0, 9999999);
+        // document.execCommand('copy');
+        try {
+            await navigator.clipboard.writeText(ui.code.value);
+            showResult(true);
+        } catch (error) {
+            console.log('Error copying to clipboard', error);
+            showResult(false);
+        }
     }
 
     function createContainer(): HTMLDivElement {
