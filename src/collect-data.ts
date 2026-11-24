@@ -75,14 +75,22 @@ export function buildResult(collectedData: CollectDataResult): string {
 function getPlayerItemsUrl_v0_0(html: string): string {
     const reAxiosItemsQuery = /\/course\/\d{3,10}?\/lessons/g;
     let m: RegExpExecArray | null = reAxiosItemsQuery.exec(html);
-    return m ? `https://coursehunter.net${m[0]}` : '';
+    const url = m ? `https://coursehunter.net${m[0]}` : '';
+    if (url) {
+        console.log('Player list v0 (01.19.20 17:00) "%s"', url);
+    }
+    return url;
 }
 
 //---------------------------------------------------------------------------
 
 function getPlayerItemsUrl_v1_0(): string {
     const id = getLessonsId();
-    return id ? `https://coursehunter.net/api/v1/course/${id}/lessons` : '';
+    const url = id ? `https://coursehunter.net/api/v1/course/${id}/lessons` : '';
+    if (url) {
+        console.log('Player list v1 (02.19.21 18:00) "%s"', url);
+    }
+    return url;
 
     function getLessonsId() {
         /*  
@@ -124,7 +132,11 @@ function getPlayerItemsUrl_v1_0(): string {
 
 function getPlayerItemsUrl_v2_0(): string { // 11.23.26
     const id = getLessonsId();
-    return id ? `https://coursehunter.net/api/v1/course/${id}/lessons` : '';
+    const url = id ? `https://coursehunter.net/api/v1/course/${id}/lessons` : '';
+    if (url) {
+        console.log('Player list v2 (11.23.26 19:54) "%s"', url);
+    }
+    return url;
 
     function getLessonsId() {
         let body = document.querySelector<HTMLElement>('body');
