@@ -11,7 +11,12 @@ export async function collectData(): Promise<CollectDataResult> {
 
     // get version 1.0 of the player items url
     let itemsUrl = getPlayerItemsUrl_v1_0();
-    
+
+    if (!itemsUrl) {
+        // get version 2.0 of the player items url 11.23.26
+        itemsUrl = getPlayerItemsUrl_v2_0();
+    }
+
     if (!itemsUrl) {
         // get version 0.0 of the player items url
         itemsUrl = getPlayerItemsUrl_v0_0(docHtml); //https://coursehunter.net/course/208/lessons"
@@ -45,7 +50,7 @@ async function fetchItems(itemsUrl: string | undefined): Promise<string | undefi
 //---------------------------------------------------------------------------
 
 type BuildResult = {
-    a: string;                    // magic string to identify the result
+    a: 'tm';                      // magic string to identify the result
     docurl: string;               // document url
     itemsurl: string | undefined; // player items url; if undefined then cannot get url from document
     doc: string;                  // document html
@@ -111,6 +116,19 @@ function getPlayerItemsUrl_v1_0(): string {
                 .filter(Boolean)[0];
         }
 
+        return id;
+    }
+}
+
+//---------------------------------------------------------------------------
+
+function getPlayerItemsUrl_v2_0(): string { // 11.23.26
+    const id = getLessonsId();
+    return id ? `https://coursehunter.net/api/v1/course/${id}/lessons` : '';
+
+    function getLessonsId() {
+        let body = document.querySelector<HTMLElement>('body');
+        let id = body?.getAttribute('data-course-id');
         return id;
     }
 }
