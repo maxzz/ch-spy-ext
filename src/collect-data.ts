@@ -9,12 +9,12 @@ export type CollectDataResult = {
 export async function collectData(): Promise<CollectDataResult> {
     const docHtml = document.documentElement.outerHTML;
 
-    // get version 1.0 of the player items url
-    let itemsUrl = getPlayerItemsUrl_v1_0();
+    // get version 2.0 of the player items url 11.23.26
+    let itemsUrl = getPlayerItemsUrl_v2_0();
 
     if (!itemsUrl) {
-        // get version 2.0 of the player items url 11.23.26
-        itemsUrl = getPlayerItemsUrl_v2_0();
+        // get version 1.0 of the player items url
+        itemsUrl = getPlayerItemsUrl_v1_0();
     }
 
     if (!itemsUrl) {
@@ -58,7 +58,7 @@ type BuildResult = {
 };
 
 export function buildResult(collectedData: CollectDataResult): string {
-    
+
     const buildResult: BuildResult = {
         a: 'tm',
         docurl: document.location.href,
@@ -67,7 +67,7 @@ export function buildResult(collectedData: CollectDataResult): string {
         items: collectedData.items,
     };
 
-    return JSON.stringify(buildResult);
+    return JSON.stringify(buildResult, null, 2); // This will not work since we are using <input> and not <textarea>
 }
 
 //---------------------------------------------------------------------------

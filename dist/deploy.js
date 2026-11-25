@@ -2,8 +2,8 @@
 	// src/collect-data.ts
 	async function collectData() {
 		const docHtml = document.documentElement.outerHTML;
-		let itemsUrl = getPlayerItemsUrl_v1_0();
-		if (!itemsUrl) itemsUrl = getPlayerItemsUrl_v2_0();
+		let itemsUrl = getPlayerItemsUrl_v2_0();
+		if (!itemsUrl) itemsUrl = getPlayerItemsUrl_v1_0();
 		if (!itemsUrl) itemsUrl = getPlayerItemsUrl_v0_0(docHtml);
 		const items = await fetchItems(itemsUrl);
 		return {
@@ -32,7 +32,7 @@
 			doc: collectedData.docHtml,
 			items: collectedData.items
 		};
-		return JSON.stringify(buildResult);
+		return JSON.stringify(buildResult, null, 2);
 	}
 	function getPlayerItemsUrl_v0_0(html) {
 		let m = /\/course\/\d{3,10}?\/lessons/g.exec(html);
